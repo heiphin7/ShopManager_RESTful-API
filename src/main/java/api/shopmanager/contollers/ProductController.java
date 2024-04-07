@@ -1,6 +1,8 @@
 package api.shopmanager.contollers;
 
 import api.shopmanager.entity.Product;
+import api.shopmanager.service.ProductService;
+import lombok.RequiredArgsConstructor;
 import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -9,7 +11,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api")
+@RequiredArgsConstructor
 public class ProductController {
+
+    private final ProductService productService;
+
     public ResponseEntity<?> saveProduct(Product product) {
 
         // Дополнительный метод для проверки полей на пустоту
@@ -38,6 +44,7 @@ public class ProductController {
             return new ResponseEntity<>("Слишком длинное описание", HttpStatus.BAD_REQUEST);
         }
 
+        productService.save(product);
 
         return ResponseEntity.ok("Ваш продукт успешно зарегестрирован!");
     }
@@ -45,6 +52,7 @@ public class ProductController {
     /*
     * Проверка полей на "пустоту"
     */
+
     private boolean checkAllFields(Product product) {
         return
                 product.getDescription().isBlank() ||
