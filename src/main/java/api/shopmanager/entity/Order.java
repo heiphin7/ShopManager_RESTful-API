@@ -1,6 +1,7 @@
 package api.shopmanager.entity;
 
 import lombok.Data;
+import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
 import java.util.Collection;
@@ -29,9 +30,11 @@ public class Order {
 
     Collection<Product> products;
 
-
+    @CreatedDate
+    @Column(name = "created_at")
     private Date created_at;
 
+    @Column(name = "completed_at")
     private Date completed_at;
 
 }

@@ -33,4 +33,8 @@ public class ProductService {
     public Optional<Product> findById(Long id) {
         return productRepository.findById(id);
     }
+
+    public List<Product> getAllProductsById(List<Long> ids){
+        return productRepository.findAllByIdIn(ids);
+    }
 }
