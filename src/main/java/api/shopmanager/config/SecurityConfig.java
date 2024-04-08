@@ -30,7 +30,7 @@ public class SecurityConfig {
 
         httpSecurity.csrf(csrf -> csrf.disable())
                 .authorizeRequests(auth ->
-                        auth.antMatchers("/api/registration", "/api/login").permitAll()
+                        auth.antMatchers("/registration", "/login").permitAll()
                                 .anyRequest().authenticated()
                 ).exceptionHandling(
                         // Ошибка UNAUTHORIZED при попытке обращения к защищенной области без аутнетификации
