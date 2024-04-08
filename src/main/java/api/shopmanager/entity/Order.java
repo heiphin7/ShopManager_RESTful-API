@@ -16,25 +16,21 @@ public class Order {
     private Long id;
 
     @Column(name = "price")
-    private int price;
+    private Double totalPrice;
 
     @Column(name = "status")
     private String status;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany
     @JoinTable(
             name = "order_products",
             joinColumns = @JoinColumn(name = "order_id"),
             inverseJoinColumns = @JoinColumn(name = "product_id")
     )
+    private Collection<Product> products;
 
-    Collection<Product> products;
-
-    @CreatedDate
     @Column(name = "created_at")
     private Date created_at;
 
-    @Column(name = "completed_at")
-    private Date completed_at;
-
 }
+

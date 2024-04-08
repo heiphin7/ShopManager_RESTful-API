@@ -22,28 +22,24 @@ public class OrderController {
     private final OrderMapper orderMapper;
     private final OrderService orderService;
 
-    /*
-    * Для создания продукта нам необходим сам объект класса Order
-    * а также список продуктов, которые будут храниться в order_products
-    * оно будет храниться следующим образом: order_id : product_id
-    */
     @PostMapping("/save/order")
     public ResponseEntity<?> createOrder(@RequestBody OrderRequest order) {
-        try{
-            if(order == null || order.getProducts().isEmpty()){
-                return new ResponseEntity<>("Все поля должны быть заполнены!", HttpStatus.BAD_REQUEST);
+        try {
+            if (order == null || order.getProducts() == null || order.getProducts().isEmpty()) {
+                return new ResponseEntity<>("Список продуктов должен быть заполнен!", HttpStatus.BAD_REQUEST);
             }
-
-            // Тут все просто, используя маппер преобразуем orderRequest к Order
 
             Order orderToSave = orderMapper.orderRequestMapper(order);
             orderService.save(orderToSave);
 
             return ResponseEntity.ok("Ваш заказ успешно сохранён!");
-        }catch (NullPointerException e){
-            return new ResponseEntity<>("Все поля должны быть заполнены!", HttpStatus.BAD_REQUEST);
-        }catch (Exception e){
-            return new ResponseEntity<>("Произошла какая-то ошибка:" + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+
+        } catch (Exception e) {
+            return new ResponseEntity<>("Произошла ошибка при сохранении заказа: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }
+

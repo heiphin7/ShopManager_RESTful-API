@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Component
@@ -20,35 +21,45 @@ public class OrderMapper {
 
     private final ProductService productService;
 
-    /*
-    * Это у нас маппер для Order-а, то есть для преобразования orderRequest (dto) на
-    * объект класса Order.
-    */
-
-    public Order orderRequestMapper(OrderRequest orderRequest){
-
+    public Order orderRequestMapper(OrderRequest orderRequest) {
         Order order = new Order();
 
-        // В базе данных у нас у каждого заказа есть список продуктов, а в OrderRequest у нас
-        // передаётся список id продуктов
+        /*
+        * Вручную создаём такие переменные как:
+        * price - общяя стоимость, которая подсчитывается когда мы перебираем каждый продукт в списке
+        * productList - список продуктов. Мы ее создали так как до этого у нас был список id продуктов
+        * и тут мы получаем продукт по id и используя сервис его сохраняем
+        */
 
+        double price = 0;
         List<Product> productList = new ArrayList<>();
 
-        // Поэтому используя циклы и сервис продуктов мы должны найти и записать
-        // Каждый продукт по их id
-
         try {
-            for(Long id: orderRequest.getProducts()){
-                productList.add(productService.findById(id).orElseThrow(() -> new NotFoundException("Продукт не найден")));
+            for (Long id : orderRequest.getProducts()) {
+                Product product = productService.findById(id)
+                        .orElseThrow(() -> new NotFoundException("Продукт не найден"));
+
+                // Добавления текущей стоимости к общей
+
+                price += product.getPrice();
+                productList.add(product);
             }
+
+            // Доп.проверка для того, чтобы не было пустых списков у заказов
+
+            if (productList.isEmpty()) {
+                throw new IllegalArgumentException("Список продуктов пуст или некорректен!");
+            }
+
         } catch (NotFoundException e) {
             throw new IllegalArgumentException("Продукт из списка продуктов не найден!");
         }
-        // Далее если у нас все успешно, просто устанавливаем значения через сеттеры
+        // Устанавливаем нужные значения для создания объекта Order , включая дату создания
 
-        order.setPrice(orderRequest.getPrice());
+        order.setCreated_at(new Date());
         order.setStatus(orderRequest.getStatus());
         order.setProducts(productList);
+        order.setTotalPrice(price);
 
         return order;
     }
