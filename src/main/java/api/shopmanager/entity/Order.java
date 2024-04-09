@@ -13,6 +13,8 @@ import java.util.Date;
 @Data
 @Table(name = "orders")
 public class Order {
+    public static String[] orderStatus = {"Новый", "В процессе", "Завершён"};
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
