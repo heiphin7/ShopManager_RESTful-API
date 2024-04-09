@@ -76,7 +76,7 @@ public class OrderController {
             Order order = orderRepository.findById(id).orElseThrow(
                     () -> new IllegalArgumentException("Заказ с нужным id не найден"));
             return order;
-        }catch (IllegalThreadStateException e){
+        }catch (IllegalArgumentException e){
             return new ResponseEntity<>("Заказ с " + id + " id не найден!", HttpStatus.BAD_REQUEST);
         }catch (Exception e){
             return new ResponseEntity<>("Произошла какая - то ошибка: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -108,7 +108,7 @@ public class OrderController {
             order.setStatus(updatedOrder.getStatus());
             order.setProducts(products);
 
-            if(order == null || order.getProducts() == null){
+            if(order.getProducts() == null){
                 return new ResponseEntity<>("Все поля должны быть заполнены!", HttpStatus.BAD_REQUEST);
             }
 

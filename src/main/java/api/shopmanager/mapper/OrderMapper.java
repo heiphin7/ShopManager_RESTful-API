@@ -1,8 +1,10 @@
 package api.shopmanager.mapper;
 
 import api.shopmanager.dto.OrderRequest;
+import api.shopmanager.entity.CompletedOrder;
 import api.shopmanager.entity.Order;
 import api.shopmanager.entity.Product;
+import api.shopmanager.repository.CompletedOrderRepository;
 import api.shopmanager.service.OrderService;
 import api.shopmanager.service.ProductService;
 import javassist.NotFoundException;
@@ -62,5 +64,21 @@ public class OrderMapper {
         order.setTotalPrice(price);
 
         return order;
+    }
+
+    // Маппер для преобразования Order к CompletedOrder
+
+    public CompletedOrder completedOrder(Order order){
+        CompletedOrder completedOrder = new CompletedOrder();
+
+        // Создаём объект CompletedOrder, и копируем все туда, используя setter-ы
+
+        completedOrder.setId(order.getId());
+        completedOrder.setCreated_at(new Date());
+        completedOrder.setStatus(order.getStatus());
+        completedOrder.setTotalPrice(order.getTotalPrice());
+        completedOrder.setProducts(new ArrayList<>(order.getProducts()));
+
+        return completedOrder;
     }
 }

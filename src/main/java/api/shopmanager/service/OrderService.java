@@ -19,28 +19,6 @@ public class OrderService {
     public void save(Order order) {
         orderRepository.save(order);
     }
-/*
-    public List<Order> findOrdersByProductId(Product product){
-
-       //
-       //  * Получение списка заказов, где содержится нужный продукт
-       //  * В первом списке содержатся их id, а во втором, используя цикл мы находим каждый из заказов
-       //
-
-        List<Long> orderIds = orderRepository.findByProducts_Id(product.getId());
-        List<Order> ordersList = new ArrayList<>();
-
-        for(Long orderId: orderIds){
-            Order order = orderRepository.findById(orderId).orElse(null);
-            if (order != null) {
-                ordersList.add(order);
-            }
-        }
-
-        return ordersList;
-    }
-*/
-
 
     public List<Order> findOrdersByProductId(Product product) {
         return orderRepository.findByProducts_Id(product.getId());
