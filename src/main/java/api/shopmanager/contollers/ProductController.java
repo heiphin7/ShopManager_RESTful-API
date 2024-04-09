@@ -92,27 +92,25 @@ public class ProductController {
         }
 
     }
-
     @PutMapping("/update/product/{id}")
     public ResponseEntity<?> updateProductById(@PathVariable Long id, @RequestBody Product updatedProduct) {
 
-        // Используем try - catch для корректной обработки ошибок
+        // Используем блок try - catch для идентификации и обработки ошибков
 
         try {
-            // "Оригинальный" продукт, пока что без изменений
+            // Берем "оригинальный" продукт, используя наш сервис
 
             Product productToUpdate = productService.findById(id)
                     .orElseThrow(() -> new UsernameNotFoundException("Product not found!"));
 
-            // Берем из оригинального продукта старую цену, так как мы будем обновлять цену
-            // в заказах, где находится наш продукт для изменения
+            // Извлекае такие значения как старая цена и обновленная цена, чтобы в будущем обновлять общие цены
+            // Заказов, которые связаны с нашим обновленным продуктом
 
             double oldPrice = productToUpdate.getPrice();
+            double newPrice = updatedProduct.getPrice();
 
+            // Устанавливаем нужные значения, используя setter-ы
 
-            // Создаём копию, которую будем сохранять
-
-            // Копирование полей из updatedProduct в productToUpdate
             productToUpdate.setName(updatedProduct.getName());
             productToUpdate.setPrice(updatedProduct.getPrice());
             productToUpdate.setDescription(updatedProduct.getDescription());
@@ -126,7 +124,7 @@ public class ProductController {
             }
 
             if (productToUpdate.getName().length() < 4 || productToUpdate.getName().length() > 25) {
-                return new ResponseEntity<>("Название продукта должно быть от 4 до 15 символов!", HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>("Название продукта должно быть от 4 до 25 символов!", HttpStatus.BAD_REQUEST);
             }
 
             if (productToUpdate.getDescription().length() < 10) {
@@ -137,8 +135,26 @@ public class ProductController {
                 return new ResponseEntity<>("Слишком длинное описание", HttpStatus.BAD_REQUEST);
             }
 
+            // После того, как обновили и проверили все значения, просто сохраняем
 
             productService.save(productToUpdate);
+
+            // Далее у нас идет обновление полной стоимости заказов, с которыми связан наш продукт
+
+            List<Order> ordersToUpdate = orderService.findOrdersByProductId(productToUpdate);
+
+            // Перебираем каждый заказ из списка, используя for-each
+
+            for (Order order : ordersToUpdate) {
+                double currentOrderPrice = order.getTotalPrice();
+
+                currentOrderPrice += (newPrice - oldPrice);
+                order.setTotalPrice(currentOrderPrice);
+
+                // Сохраняем обновленный заказ
+                // Нам не нужен дополнительный метод для обновления, так как при использовании save() JPA автоматический обновляет
+                orderService.save(order);
+            }
 
             return ResponseEntity.ok("Ваш продукт успешно обновлен!");
 
