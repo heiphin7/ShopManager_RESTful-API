@@ -27,48 +27,61 @@ public class RegistrationController {
     @PostMapping("/registration")
     public ResponseEntity<?> registration(@RequestBody RegistrationUserDto registrationUserDto) {
 
-        /*
-        * Проверка всех полей на пустоту
-        */
+        try{
 
-        if (isAnyFieldEmpty(registrationUserDto)) {
-            return new ResponseEntity<>("Все поля должны быть заполнены", HttpStatus.BAD_REQUEST);
-        }
+            /*
+             * Проверка всех полей на пустоту
+             */
+
+            if (isAnyFieldEmpty(registrationUserDto)) {
+                return new ResponseEntity<>("Все поля должны быть заполнены", HttpStatus.BAD_REQUEST);
+            }
 
         /*
          Мы приступаем к следующим проверкам только ПОСЛЕ того, как проверили все поля на пустоту
          во избежание ошибки
          */
 
-        if (!registrationUserDto.getPassword().equals(registrationUserDto.getConfirmPassword())) {
-            return new ResponseEntity<>("Пароли не совпадают", HttpStatus.BAD_REQUEST);
+            if (!registrationUserDto.getPassword().equals(registrationUserDto.getConfirmPassword())) {
+                return new ResponseEntity<>("Пароли не совпадают", HttpStatus.BAD_REQUEST);
+            }
+
+            if (isInvalidPassword(registrationUserDto.getPassword())) {
+                return new ResponseEntity<>("Пароль не должен быть пустым", HttpStatus.BAD_REQUEST);
+            }
+
+            if (isInvalidUsername(registrationUserDto.getUsername())) {
+                return new ResponseEntity<>("Имя пользователя не должно быть больше 5-ти символов без пробелов", HttpStatus.BAD_REQUEST);
+            }
+
+            if (!registrationUserDto.getEmail().matches(EMAIL_REGEX)) {
+                return new ResponseEntity<>("Введите корректную почту!", HttpStatus.BAD_REQUEST);
+            }
+
+            Optional<User> optionalUser = userService.findByUsername(registrationUserDto.getUsername());
+            if (optionalUser.isPresent()) {
+                return new ResponseEntity<>("Имя пользователя занято!", HttpStatus.BAD_REQUEST);
+            }
+
+            // Используем mapper для преобразования RegistrationUserDto в обычного User-а для дальнейшего сохранения
+
+            User user = mapper.registrationUserDto(registrationUserDto);
+            userService.save(user);
+
+            // Сообщение о успешной регистрации
+
+            return ResponseEntity.ok("Успешная регистрация");
+
+            // Делаем дополнительную проверку на Null, для лучшей валидации данных
+
+        }catch (NullPointerException e){
+            return new ResponseEntity<>("Все поля должны быть заполнены!", HttpStatus.BAD_REQUEST);
+        }catch (Exception e){
+            // Непридвиденная ошибка
+
+            return new ResponseEntity<>("Произошла какая-то ошибка: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
-        if (isInvalidPassword(registrationUserDto.getPassword())) {
-            return new ResponseEntity<>("Пароль не должен быть пустым", HttpStatus.BAD_REQUEST);
-        }
-
-        if (isInvalidUsername(registrationUserDto.getUsername())) {
-            return new ResponseEntity<>("Имя пользователя не должно быть больше 5-ти символов без пробелов", HttpStatus.BAD_REQUEST);
-        }
-
-        if (!registrationUserDto.getEmail().matches(EMAIL_REGEX)) {
-            return new ResponseEntity<>("Введите корректную почту!", HttpStatus.BAD_REQUEST);
-        }
-
-        Optional<User> optionalUser = userService.findByUsername(registrationUserDto.getUsername());
-        if (optionalUser.isPresent()) {
-            return new ResponseEntity<>("Имя пользователя занято!", HttpStatus.BAD_REQUEST);
-        }
-
-        // Используем mapper для преобразования RegistrationUserDto в обычного User-а для дальнейшего сохранения
-
-        User user = mapper.registrationUserDto(registrationUserDto);
-        userService.save(user);
-
-        // Сообщение о успешной регистрации
-
-        return ResponseEntity.ok("Успешная регистрация");
     }
 
     private boolean isInvalidPassword(String password) {

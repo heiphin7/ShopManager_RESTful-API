@@ -1,6 +1,8 @@
 package api.shopmanager.contollers;
 
+import api.shopmanager.entity.Order;
 import api.shopmanager.entity.Product;
+import api.shopmanager.service.OrderService;
 import api.shopmanager.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -9,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -17,6 +20,7 @@ import java.util.List;
 public class ProductController {
 
     private final ProductService productService;
+    private final OrderService orderService;
 
     @PostMapping("/save/product")
     public ResponseEntity<?> createProduct(@RequestBody Product product) {
@@ -48,7 +52,7 @@ public class ProductController {
 
             // Проверка на название продукта, оно должно быть от 4 до 15 символов
 
-            if (product.getName().length() < 4 || product.getName().length() > 15) {
+            if (product.getName().length() < 4 || product.getName().length() > 25) {
                 return new ResponseEntity<>("Название продукта должно быть от 4 до 15 символов!", HttpStatus.BAD_REQUEST);
             }
 
@@ -95,8 +99,16 @@ public class ProductController {
         // Используем try - catch для корректной обработки ошибок
 
         try {
+            // "Оригинальный" продукт, пока что без изменений
+
             Product productToUpdate = productService.findById(id)
                     .orElseThrow(() -> new UsernameNotFoundException("Product not found!"));
+
+            // Берем из оригинального продукта старую цену, так как мы будем обновлять цену
+            // в заказах, где находится наш продукт для изменения
+
+            double oldPrice = productToUpdate.getPrice();
+
 
             // Создаём копию, которую будем сохранять
 
@@ -113,7 +125,7 @@ public class ProductController {
                 return new ResponseEntity<>("Цена продукта не может быть отрицательным или равным нулю!", HttpStatus.BAD_REQUEST);
             }
 
-            if (productToUpdate.getName().length() < 4 || productToUpdate.getName().length() > 15) {
+            if (productToUpdate.getName().length() < 4 || productToUpdate.getName().length() > 25) {
                 return new ResponseEntity<>("Название продукта должно быть от 4 до 15 символов!", HttpStatus.BAD_REQUEST);
             }
 
@@ -124,6 +136,7 @@ public class ProductController {
             if (productToUpdate.getDescription().length() > 100) {
                 return new ResponseEntity<>("Слишком длинное описание", HttpStatus.BAD_REQUEST);
             }
+
 
             productService.save(productToUpdate);
 
@@ -160,7 +173,7 @@ public class ProductController {
         }
 
         catch (Exception e) {
-            return new ResponseEntity<>("Произошла какая - то ошибка: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Вы не можете удалить продукт, так как он уже содержится в заказе!", HttpStatus.BAD_REQUEST);
         }
 
     }

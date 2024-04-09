@@ -1,6 +1,7 @@
 package api.shopmanager.entity;
 
 import lombok.Data;
+import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
@@ -8,6 +9,7 @@ import java.util.Collection;
 import java.util.Date;
 
 @Entity
+@DynamicUpdate
 @Data
 @Table(name = "orders")
 public class Order {
