@@ -49,7 +49,7 @@ public class OrderController {
     }
 
     // Получение списка всех продуктов
-    @GetMapping("findAll/orders")
+    @GetMapping("/findAll/orders")
     public ResponseEntity<?> getAllOrders() {
 
         try {
