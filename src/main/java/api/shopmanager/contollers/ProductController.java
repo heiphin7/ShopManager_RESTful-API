@@ -56,7 +56,7 @@ public class ProductController {
             // Проверка на название продукта, оно должно быть от 4 до 15 символов
 
             if (product.getName().length() < 4 || product.getName().length() > 25) {
-                return new ResponseEntity<>("Название продукта должно быть от 4 до 15 символов!", HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>("Название продукта должно быть от 4 до 25 символов!", HttpStatus.BAD_REQUEST);
             }
 
             if (product.getDescription().length() < 10) {
