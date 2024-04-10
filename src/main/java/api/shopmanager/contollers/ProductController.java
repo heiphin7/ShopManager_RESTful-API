@@ -22,10 +22,13 @@ public class ProductController {
     private final ProductService productService;
     private final OrderService orderService;
 
+    // Создание нового продукта
+
     @PostMapping("/save/product")
     public ResponseEntity<?> createProduct(@RequestBody Product product) {
 
         try{
+
             /*
             * Пользуясь сервисом продуктов, ищем продукт на названию
             * если такого нету, приравняем его null, а этот null будет проверен при следующей проверке
@@ -75,23 +78,25 @@ public class ProductController {
         }
     }
 
+    // Получение списка всех продуктов
+
     @GetMapping("/findAll/products")
-    public Object getAllProducts() {
-        /*
-        * Данный метод возвращает Object так как мы можем вернуть как и List, так и ResponseEntity
-        * Даже при такой простой операции у нас может возникнуть ошибка, поэтму
-        * делаем примитивную конструкцию try - catch
-        */
+    public ResponseEntity<?> getAllProducts() {
+
+        // Примитивная конструкция для обработки ошибок
 
         try{
             List<Product> products = productService.findAllProduct();
 
-            return products;
+            return ResponseEntity.ok(products);
         }catch (Exception e){
             return new ResponseEntity<>("Произошла какая-то ошибка: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
+
+    // Обновление продукта по id
+
     @PutMapping("/update/product/{id}")
     public ResponseEntity<?> updateProductById(@PathVariable Long id, @RequestBody Product updatedProduct) {
 
@@ -166,6 +171,7 @@ public class ProductController {
         }
     }
 
+    // Удаление продукта по id
 
     @DeleteMapping("/delete/product/{id}")
     public ResponseEntity<?> deleteProductById(@PathVariable Long id){
@@ -194,14 +200,16 @@ public class ProductController {
 
     }
 
+    // Получение продукта по его id
+
     @GetMapping("/product/{id}")
-    public Object getProductById(@PathVariable Long id){
+    public ResponseEntity<?> getProductById(@PathVariable Long id){
 
         try{
             Product product = productService.findById(id)
                     .orElseThrow(() -> new UsernameNotFoundException("Выбранный продукт не найден"));
 
-            return product;
+            return ResponseEntity.ok(product);
         }catch (UsernameNotFoundException e){
             return new ResponseEntity<>("Выбранный продукт не найден", HttpStatus.NOT_FOUND);
         }

@@ -32,9 +32,9 @@ public class SecurityConfig {
         httpSecurity.csrf(csrf -> csrf.disable())
                 .authorizeRequests(auth ->
                         auth.antMatchers("/registration", "/login").permitAll()
-
                                 // Разрешаем изменять данные только manager или admin, а просто user может только просматривать
                                 .antMatchers("/api/delete/**", "/api/update/**", "/api/save/**").hasAnyRole("MANAGER", "ADMIN")
+                                .antMatchers("/admin/**").hasRole("ADMIN")
                                 .anyRequest().authenticated()
                 ).exceptionHandling(
                         // Ошибка UNAUTHORIZED при попытке обращения к защищенной области без аутнетификации

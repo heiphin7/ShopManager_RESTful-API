@@ -26,6 +26,8 @@ public class OrderController {
     private final OrderRepository orderRepository;
     private final ProductRepository productRepository;
 
+    // Создание нового заказа
+
     @PostMapping("/save/order")
     public ResponseEntity<?> createOrder(@RequestBody OrderRequest order) {
         try {
@@ -48,40 +50,39 @@ public class OrderController {
 
     // Получение списка всех продуктов
     @GetMapping("findAll/orders")
-    public Object getAllOrders() {
+    public ResponseEntity<?> getAllOrders() {
 
         try {
             List<Order> ordersList = orderRepository.findAll();
 
-            return ordersList;
+            return ResponseEntity.ok(ordersList);
         }catch (Exception e){
             return new ResponseEntity<>("Произошла какая то ошибка: " + e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
 
     /*
-    * Получение заказа с указанным id
-    *
-    * Почему данынй метод возвращает Object?
-    * Так как при поиске значения мы можем вернуть как и объект класса Order, Так и ResponseEntity(при ошибке)
-    * а они все являются типа данных Object
+         Получение заказа с указанным id
     */
 
     @GetMapping("/get/order/{id}")
-    public Object getOrderById(@PathVariable Long id){
+    public ResponseEntity<?> getOrderById(@PathVariable Long id){
 
         // Тут все просто, используем JPA репозиторий чтобы найти order о его id
 
         try {
             Order order = orderRepository.findById(id).orElseThrow(
                     () -> new IllegalArgumentException("Заказ с нужным id не найден"));
-            return order;
+
+            return ResponseEntity.ok(order);
         }catch (IllegalArgumentException e){
             return new ResponseEntity<>("Заказ с " + id + " id не найден!", HttpStatus.BAD_REQUEST);
         }catch (Exception e){
             return new ResponseEntity<>("Произошла какая - то ошибка: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    // Обновление заказа по id
 
     @PutMapping("/update/order/{id}")
     public ResponseEntity<?> updateOrderById(@PathVariable Long id, @RequestBody OrderRequest updatedOrder){
@@ -147,6 +148,7 @@ public class OrderController {
         }
     }
 
+    // Удаление заказа по id
 
     @DeleteMapping("/delete/order/{id}")
     public ResponseEntity<?> deleteOrderById(@PathVariable Long id){
