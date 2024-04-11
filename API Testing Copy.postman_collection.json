@@ -1,0 +1,561 @@
+{
+	"info": {
+		"_postman_id": "32f5e129-8cd1-41f0-9e49-d959aa5b4cc2",
+		"name": "API Testing Copy",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "33446645"
+	},
+	"item": [
+		{
+			"name": "Authorization",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\": \"admin\",\r\n    \"password\": \"admin\"\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:4132/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4132",
+					"path": [
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Registration",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\": \"ExampleUserr\",\r\n    \"email\": \"example@email.com\",\r\n    \"password\": \"pass123\",\r\n    \"confirmPassword\": \"pass123\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:4132/registration",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4132",
+					"path": [
+						"registration"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create FIrst Product",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"Компьютер\",\r\n    \"description\": \"ПК, предназначенный как для работы и учебы, так и для игр\",\r\n    \"price\": 49999\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:4132/api/save/product",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4132",
+					"path": [
+						"api",
+						"save",
+						"product"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Second Product",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"Ноутбук\",\r\n    \"description\": \"Прекрасная замена ПК, если вы хоитите компактности и производительности\",\r\n    \"price\": 39999\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:4132/api/save/product",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4132",
+					"path": [
+						"api",
+						"save",
+						"product"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get All Products",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Парсим JSON ответ\r",
+							"var jsonData = pm.response.json();\r",
+							"\r",
+							"// Извлекаем id первого продукта и сохраняем его в переменную\r",
+							"var firstProductId = jsonData[0].id;\r",
+							"var secondProductId = jsonData[1].id;\r",
+							"\r",
+							"// Сохраняем id первого продукта в глобальное окружение\r",
+							"pm.environment.set(\"firstProductId\", firstProductId);\r",
+							"\r",
+							"// Сохраняем id второго продукта в глобальное окружение\r",
+							"pm.environment.set(\"secondProductId\", secondProductId);\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:4132/api/findAll/products",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4132",
+					"path": [
+						"api",
+						"findAll",
+						"products"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Product by Id",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:4132/api/product/{{firstProductId}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4132",
+					"path": [
+						"api",
+						"product",
+						"{{firstProductId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Change in Created Product",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"iPhone 13 PRO MAX\",\r\n    \"description\": \"iPhone 13 Pro Max: мощь и стиль в каждом кадре.\",\r\n    \"price\": 25000\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:4132/api/update/product/{{firstProductId}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4132",
+					"path": [
+						"api",
+						"update",
+						"product",
+						"{{firstProductId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Product By Id",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:4132/api/delete/product/{{firstProductId}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4132",
+					"path": [
+						"api",
+						"delete",
+						"product",
+						"{{firstProductId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create new Order",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"status\": \"новый\",\r\n\r\n    // Список продуктов, содержащие в заказе\r\n    \"products\": [{{secondProductId}}]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:4132/api/save/order",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4132",
+					"path": [
+						"api",
+						"save",
+						"order"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Second Order",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"status\": \"новый\",\r\n\r\n    // Список продуктов, содержащие в заказе\r\n    \"products\": [{{secondProductId}}]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:4132/api/save/order",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4132",
+					"path": [
+						"api",
+						"save",
+						"order"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get all Orders",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Парсим JSON ответ\r",
+							"var jsonData = pm.response.json();\r",
+							"\r",
+							"// Проверяем, что ответ не пустой и содержит заказы\r",
+							"pm.test(\"Response body is not empty and contains orders\", function () {\r",
+							"    pm.expect(jsonData).to.be.an('array').that.is.not.empty; // Проверяем, что jsonData это не пустой массив\r",
+							"});\r",
+							"\r",
+							"// Парсим JSON ответ\r",
+							"var jsonData = pm.response.json();\r",
+							"\r",
+							"// Извлекаем id первого заказа и сохраняем его в переменную\r",
+							"var firstOrderId = jsonData[0].id;\r",
+							"var secondOrderId = jsonData[1].id;\r",
+							"\r",
+							"// Сохраняем id первого заказа в глобальное окружение\r",
+							"pm.environment.set(\"firstOrderId\", firstOrderId);\r",
+							"\r",
+							"// Сохраняем id второго заказа в глобальное окружение\r",
+							"pm.environment.set(\"secondOrderId\", secondOrderId);"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"status\": \"новый\",\r\n\r\n    // Список продуктов, содержащие в заказе\r\n    \"products\": [{{secondProductId}}, {{thirdProduct}}]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:4132/api/findAll/orders",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4132",
+					"path": [
+						"api",
+						"findAll",
+						"orders"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Order by ID",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"status\": \"новый\",\r\n\r\n    // Список продуктов, содержащие в заказе\r\n    \"products\": [{{secondProductId}}, {{thirdProduct}}]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:4132/api/get/order/{{firstOrderId}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4132",
+					"path": [
+						"api",
+						"get",
+						"order",
+						"{{firstOrderId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Order by Id",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    // Здесь, мы изменили статус заказа\r\n    \"status\": \"В процессе\",\r\n\r\n    // Список продуктов, содержащие в заказе\r\n    \"products\":  [{{secondProductId}}]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:4132/api/update/order/{{firstOrderId}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4132",
+					"path": [
+						"api",
+						"update",
+						"order",
+						"{{firstOrderId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Order By ID",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    // Здесь, мы изменили статус заказа\r\n    \"status\": \"В процессе\",\r\n\r\n    // Список продуктов, содержащие в заказе\r\n    \"products\": [{{secondProductId}}, {{thirdProduct}}]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:4132/api/delete/order/{{firstOrderId}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4132",
+					"path": [
+						"api",
+						"delete",
+						"order",
+						"{{firstOrderId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Send Order to archive",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    // Здесь, мы изменили статус заказа\r\n    \"status\": \"В процессе\",\r\n\r\n    // Список продуктов, содержащие в заказе\r\n    \"products\": [{{secondProductId}}, {{thirdProduct}}]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:4132/admin/complete/order/{{secondOrderId}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4132",
+					"path": [
+						"admin",
+						"complete",
+						"order",
+						"{{secondOrderId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "FindAll Users",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    // Здесь, мы изменили статус заказа\r\n    \"status\": \"В процессе\",\r\n\r\n    // Список продуктов, содержащие в заказе\r\n    \"products\": [{{secondProductId}}, {{thirdProduct}}]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:4132/admin/findAll/users",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4132",
+					"path": [
+						"admin",
+						"findAll",
+						"users"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
