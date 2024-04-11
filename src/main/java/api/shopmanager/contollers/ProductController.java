@@ -69,7 +69,7 @@ public class ProductController {
 
             productService.save(product);
 
-            return ResponseEntity.ok("Ваш продукт успешно зарегестрирован!");
+            return ResponseEntity.ok("Ваш продукт успешно зарегестрирован! : \n" + product);
 
         }catch (IllegalArgumentException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
