@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,8 +25,16 @@ public class UserService {
         * Роль мы достаём по имени из roleRepo
         */
         user.setRoles(List.of(roleRepository.findByName("ROLE_USER").get()));
+        user.setCreated_at(new Date());
 
         userRepository.save(user);
+    }
+    @Transactional
+    public void deleteUserById(Long id){
+        User user = userRepository.findById(id).orElseThrow(
+                () -> new IllegalArgumentException("Пользователь не найден!")
+        );
+        userRepository.delete(user);
     }
 
     public Optional<User> findByUsername(String username){

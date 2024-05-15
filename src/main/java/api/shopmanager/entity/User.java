@@ -29,14 +29,6 @@ public class User {
     @Column(name = "created_at")
     private Date created_at;
 
-    @OneToMany
-    @JoinTable(
-            name = "users_orders",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "order_id")
-    )
-    Collection<Order> orders;
-
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(
             name = "users_roles",
